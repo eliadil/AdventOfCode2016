@@ -26,8 +26,6 @@ defmodule Day05 do
             fn(x, acc) ->
 
                 {place, char} = {String.at(x, 0), String.at(x, 1)}
-
-                
                 newAcc = if Map.has_key?(acc, place) == false and String.contains?("01234567", place) do
                     Map.put(acc, place, char)
                     else 

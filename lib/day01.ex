@@ -1,9 +1,9 @@
-defmodule AOC_2016 do
+defmodule Day01 do
 
 
 
-    def day01task01 do
-        {:ok, file} = File.read "lib/day0101.txt"
+    def task01 do
+        {:ok, file} = File.read "lib/day01.txt"
         directions = String.split(file, ", ")
 
         endPos = getEndPosition(directions, {0, 0, :north})
@@ -15,8 +15,8 @@ defmodule AOC_2016 do
         IO.puts dist
     end
 
-    def day01task02 do
-        {:ok, file} = File.read "lib/day0101.txt"
+    def task02 do
+        {:ok, file} = File.read "lib/day01.txt"
         directions = String.split(file, ", ")
 
         endPos = getFirstPositionVisitedTwice(directions, {0, 0, :north}, MapSet.new([{0, 0}]))
