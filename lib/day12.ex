@@ -5,24 +5,55 @@ defmodule Day12 do
         instructions = String.split(file, "\r\n")
         |> Enum.map(&tokenize/1)
 
-
+        doIntstructions(instructions, 0, %{})
+        |> IO.inspect
     end
 
     defp tokenize(string) do
-        IO.puts "wot"
+        r = ~r/([a-z]+) (\d+|[a-z]) ?([a-z0-9\-]+)?/
+        Regex.scan(r, string, capture: :all_but_first)
+        |> List.first
+        |> Enum.map(fn(x) -> if Regex.match?(~r/\d+/, x), do: String.to_integer(x), else: String.to_atom(x) end)
+        |> List.to_tuple
+        |> IO.inspect
     end
 
-
-    defp inc(state, key) do
-        Map.update(state, key, 0, &(&1 + 1))
+    defp doIntstructions(instructions, pos, state) do
+        inst = Enum.at(instructions, pos)
+        {newState, move} = doIt(inst, state)
+        #IO.inspect pos
+        if pos + move >= Enum.count(instructions) or pos + move < 0 do
+            newState
+        else
+            doIntstructions(instructions, pos + move, newState)
+        end
     end
 
-    defp dec(state, key) do
-        Map.update(state, key, 0, &(&1 - 1))
+    defp doIt({:cpy, what, to}, state) do 
+        w = if is_integer(what) do
+            what
+        else 
+            Map.get(state, what, 0)
+        end
+
+        {Map.put(state, to, w), 1}
     end
 
-
-    defp cpy(state, key) do
-        
+    defp doIt({:dec, what}, state) do
+        {Map.update(state, what, 0, &(&1 - 1)), 1}
+    end
+    
+    defp doIt({:inc, what}, state) do
+        {Map.update(state, what, 0, &(&1 + 1)), 1}
+    end
+    
+    defp doIt({:jnz, ifThis, that}, state) do
+        v = if is_integer(ifThis) do
+            ifThis
+        else 
+            Map.get(state, ifThis, 0)
+        end
+        jump = if v != 0, do: that, else: 1
+        {state, jump}
     end
 end
